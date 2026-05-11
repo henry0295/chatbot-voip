@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { ChatRequest, ChatResponse } from './chat.types';
+import type { ChatRequest, ChatResponse } from './chat.types';
 
 @Controller('api/chat')
 export class ChatController {

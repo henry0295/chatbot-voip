@@ -28,11 +28,7 @@ interface AnthropicMessage {
   role: ConversationRole;
   content:
     | string
-    | (
-        | AnthropicTextBlock
-        | AnthropicToolUseBlock
-        | AnthropicToolResultBlock
-      )[];
+    | (AnthropicTextBlock | AnthropicToolUseBlock | AnthropicToolResultBlock)[];
 }
 
 interface AnthropicResponse {
@@ -109,7 +105,8 @@ export class ChatService {
 
         return {
           answer:
-            answer || 'No se obtuvo texto de respuesta desde Claude en este turno.',
+            answer ||
+            'No se obtuvo texto de respuesta desde Claude en este turno.',
           model: response.model,
           usedTools: [...usedTools],
           fallback: false,
@@ -121,14 +118,16 @@ export class ChatService {
         content: response.content,
       });
 
-      const toolResults: AnthropicToolResultBlock[] = toolUses.map((toolUse) => {
-        usedTools.add(toolUse.name);
-        return {
-          type: 'tool_result',
-          tool_use_id: toolUse.id,
-          content: this.executeTool(toolUse.name, toolUse.input),
-        };
-      });
+      const toolResults: AnthropicToolResultBlock[] = toolUses.map(
+        (toolUse) => {
+          usedTools.add(toolUse.name);
+          return {
+            type: 'tool_result',
+            tool_use_id: toolUse.id,
+            content: this.executeTool(toolUse.name, toolUse.input),
+          };
+        },
+      );
 
       messages.push({
         role: 'user',
