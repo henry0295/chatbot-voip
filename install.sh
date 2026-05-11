@@ -70,7 +70,37 @@ install_docker_if_needed() {
   fi
 
   log_info "Instalando Docker..."
-  curl -fsSL https://get.docker.com | sh
+  
+  # Para Rocky/RHEL/CentOS, usar dnf directamente
+  if command -v dnf >/dev/null 2>&1 || command -v yum >/dev/null 2>&1; then
+    local pkg_manager="dnf"
+    if ! command -v dnf >/dev/null 2>&1; then
+      pkg_manager="yum"
+    fi
+    
+    log_info "Detectado sistema basado en RHEL. Usando ${pkg_manager}..."
+    
+    # Agregar repositorio de Docker
+    ${pkg_manager} config-manager --add-repo https://download.docker.com/linux/rocky/docker-ce.repo 2>/dev/null || \
+    ${pkg_manager} config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo 2>/dev/null || true
+    
+    # Intentar instalar Docker con reintentos
+    local max_retries=3
+    local retry=0
+    while [ $retry -lt $max_retries ]; do
+      if ${pkg_manager} install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin 2>/dev/null; then
+        break
+      fi
+      retry=$((retry + 1))
+      if [ $retry -lt $max_retries ]; then
+        log_warn "Reintentando instalación de Docker (intento $((retry + 1))/$max_retries)..."
+        sleep 5
+      fi
+    done
+  else
+    # Para otros sistemas, usar el instalador oficial
+    curl -fsSL https://get.docker.com | sh
+  fi
 
   if command -v systemctl >/dev/null 2>&1; then
     systemctl enable docker >/dev/null 2>&1 || true
@@ -79,6 +109,7 @@ install_docker_if_needed() {
 
   if ! command -v docker >/dev/null 2>&1; then
     log_err "No se pudo instalar Docker automáticamente."
+    log_info "Intenta instalar manualmente: https://docs.docker.com/engine/install/rocky/"
     exit 1
   fi
   log_ok "Docker instalado correctamente."
