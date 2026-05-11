@@ -65,7 +65,9 @@ const DOC_PAGES: Array<{ title: string; excerpt: string; path: string }> = [
   },
 ];
 
+// Evita bucles infinitos de tools manteniendo una cadena de razonamiento corta.
 const MAX_TOOL_ITERATIONS = 3;
+// Balance entre costo y completitud para respuestas de producto/documentación.
 const DEFAULT_MAX_TOKENS = 700;
 
 @Injectable()
