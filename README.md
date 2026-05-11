@@ -71,6 +71,23 @@ Servicios:
 - Postgres: `localhost:5432`
 - Redis: `localhost:6379`
 
+## Instalación rápida en servidor (una sola orden)
+
+Puedes desplegar en un servidor Linux (Ubuntu, Debian, CentOS, Rocky, Fedora, Arch, Alpine, etc.) con:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/henry0295/chatbot-voip/main/install.sh | sudo bash
+```
+
+Qué hace `install.sh`:
+- Instala dependencias base (`git`, `curl`, `ca-certificates`)
+- Instala Docker si no existe
+- Clona/actualiza el proyecto en `/opt/chatbot-voip`
+- Crea `.env` desde `.env.example` si falta
+- Levanta todo con `docker compose up --build -d`
+
+Después de instalar, revisa `/opt/chatbot-voip/.env` y define `ANTHROPIC_API_KEY`.
+
 ## Scripts útiles
 
 - `npm run lint`
