@@ -71,28 +71,41 @@ install_docker_if_needed() {
 
   log_info "Instalando Docker..."
   
-  # Para Rocky/RHEL/CentOS, usar dnf directamente
+  # Para Rocky/RHEL/CentOS, intentar múltiples estrategias
   if command -v dnf >/dev/null 2>&1 || command -v yum >/dev/null 2>&1; then
     local pkg_manager="dnf"
     if ! command -v dnf >/dev/null 2>&1; then
       pkg_manager="yum"
     fi
     
-    log_info "Detectado sistema basado en RHEL. Usando ${pkg_manager}..."
+    log_info "Detectado sistema basado en RHEL. Intentando instalar Docker..."
     
-    # Habilitar módulo docker en Rocky/RHEL 9 si es necesario
-    ${pkg_manager} module enable -y docker 2>/dev/null || true
-    
-    # Agregar repositorio de Docker (intentar múltiples fuentes)
-    ${pkg_manager} config-manager --add-repo https://download.docker.com/linux/rocky/docker-ce.repo 2>/dev/null || true
-    
-    # Limpiar cache del repositorio
-    ${pkg_manager} clean expire-cache 2>/dev/null || true
-    
-    # Intentar instalación directa primero con el instalador oficial como fallback
-    if ! ${pkg_manager} install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin 2>/dev/null; then
-      log_warn "Instalación desde repositorio de Docker CE falló. Intentando instalador oficial..."
-      curl -fsSL https://get.docker.com | sh
+    # Estrategia 1: Intentar desde repositorios nativos de Rocky Linux (más confiable)
+    log_info "Intento 1: Buscando docker en repositorios nativos de Rocky Linux..."
+    if ${pkg_manager} install -y docker 2>/dev/null; then
+      log_ok "Docker instalado desde repositorios nativos."
+    else
+      # Estrategia 2: Habilitar módulo docker y reintentar
+      log_info "Intento 2: Habilitando módulo docker..."
+      ${pkg_manager} module enable -y docker 2>/dev/null || true
+      ${pkg_manager} install -y docker 2>/dev/null || {
+        # Estrategia 3: Usar el instalador oficial como último recurso
+        log_info "Intento 3: Usando instalador oficial de Docker..."
+        curl -fsSL https://get.docker.com | sh || {
+          # Estrategia 4: Ofrecer Podman como alternativa
+          log_warn "No se pudo instalar Docker. Intentando instalar Podman como alternativa..."
+          if ${pkg_manager} install -y podman podman-docker 2>/dev/null; then
+            log_ok "Podman instalado. Usando Podman en lugar de Docker."
+            # Crear alias para compatibilidad
+            mkdir -p /etc/bash_completion.d
+            echo 'alias docker=podman' >> /etc/bashrc
+            return
+          else
+            log_err "No se pudo instalar Docker ni Podman."
+            exit 1
+          fi
+        }
+      }
     fi
   else
     # Para otros sistemas, usar el instalador oficial
@@ -105,8 +118,7 @@ install_docker_if_needed() {
   fi
 
   if ! command -v docker >/dev/null 2>&1; then
-    log_err "No se pudo instalar Docker automáticamente."
-    log_info "Intenta instalar manualmente: https://docs.docker.com/engine/install/rocky/"
+    log_err "No se pudo instalar Docker."
     exit 1
   fi
   log_ok "Docker instalado correctamente."
