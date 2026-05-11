@@ -32,7 +32,7 @@ export function ChatPlayground() {
       const response = await fetch(`${apiBaseUrl}/api/chat`, {
         method: "POST",
         headers: {
-          "content-type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ message }),
       });

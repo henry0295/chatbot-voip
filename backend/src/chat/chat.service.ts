@@ -176,7 +176,7 @@ export class ChatService {
     const response = await fetch(this.apiUrl, {
       method: 'POST',
       headers: {
-        'content-type': 'application/json',
+        'Content-Type': 'application/json',
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
       },
