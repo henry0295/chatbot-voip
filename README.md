@@ -1,95 +1,181 @@
-# chatbot-voip
+# OmniBot 🤖
 
-Proyecto propio inspirado en una experiencia tipo documentación SaaS (similar en enfoque de producto, no copia), con stack:
+**Plataforma SaaS para gestión de Agentes de IA multi-canal + CRM + Automatizaciones visuales**
 
-- **Backend:** Node.js + NestJS
-- **Frontend:** React + Next.js
-- **Infra local:** Docker + PostgreSQL + Redis
-- **LLM:** Claude API con soporte de herramientas (tools) nativas
+Una plataforma empresarial completa que permite crear, gestionar y escalar agentes de inteligencia artificial a través de múltiples canales (WhatsApp, Instagram, Messenger, Facebook) con automatizaciones visuales y gestión de contactos integrada.
 
-## Estructura
+**Stack Tecnológico:**
+- **Backend:** Node.js + NestJS + TypeORM + PostgreSQL + Redis
+- **Frontend:** React + Next.js + Zustand/Redux
+- **LLM:** Claude API + OpenAI API (intercambiables)
+- **Canales:** WhatsApp, Instagram, Messenger, Facebook
+- **Infraestructura:** Docker + Docker Compose
 
-- `/backend` API en NestJS
-- `/frontend` interfaz web en Next.js
-- `/docker-compose.yml` entorno local completo
+---
 
-## Endpoints backend
+## 🎯 Características
 
-- `GET /` metadatos del proyecto
-- `GET /health` estado del servicio
-- `POST /api/chat` consulta a Claude con tools
+- 🤖 **Agentes de IA Configurables** - Crear múltiples agentes con settings personalizados
+- 📱 **Multi-Canal** - WhatsApp, Instagram, Messenger, Facebook en un solo lugar
+- 🏢 **Multi-Tenant** - Workspaces aislados con gestión de equipos
+- 🔗 **Automatizaciones Visuales** - Editor no-code para flujos complejos
+- 👥 **CRM Integrado** - Contactos, oportunidades, tareas
+- 📊 **Campañas Masivas** - Marketing automatizado por múltiples canales
+- 🛠️ **Developer Tools** - API REST, SDK, CLI
+- 💳 **Sistema de Planes** - Monetización y marca blanca
 
-Ejemplo de request:
+---
 
-```json
-{
-  "message": "¿Qué stack me recomiendas para empezar?"
-}
+## 📁 Estructura del Proyecto
+
+```
+omnibot/
+├── backend/
+│   ├── src/
+│   │   ├── workspace/          ← Multi-tenant (Fase 1 ✅)
+│   │   ├── agent/              ← Agentes IA (Fase 2)
+│   │   ├── channel/            ← Canales (Fase 3-4)
+│   │   ├── crm/                ← CRM (Fase 5)
+│   │   ├── automation/         ← Flujos visuales (Fase 6)
+│   │   ├── campaign/           ← Campañas (Fase 7)
+│   │   ├── chat/               ← Chat (existente)
+│   │   ├── health/             ← Health checks (existente)
+│   │   ├── auth/               ← Autenticación (existente)
+│   │   └── database/           ← Migraciones TypeORM
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── dashboard/      ← Dashboard
+│   │   │   ├── agents/         ← Agentes
+│   │   │   ├── channels/       ← Canales
+│   │   │   ├── crm/            ← CRM
+│   │   │   └── automations/    ← Builder visual
+│   │   └── components/
+│   └── package.json
+├── docker-compose.yml
+├── FASE_1_IMPLEMENTATION.md    ← Documentación Fase 1
+└── README.md                   (este archivo)
 ```
 
-## Variables de entorno
+---
 
-1. Copia el ejemplo:
+## 🚀 Instalación en Producción
 
-```bash
-cp .env.example .env
-```
+**Nota:** Instalaciones y tests se realizarán cuando el proyecto esté completo (Fase 8).
 
-2. Define:
-- `ANTHROPIC_API_KEY`
-- `CLAUDE_MODEL` (opcional)
-
-## Desarrollo local (sin Docker)
-
-Instalar dependencias:
-
-```bash
-npm install
-```
-
-Backend:
-
-```bash
-npm run dev:backend
-```
-
-Frontend:
-
-```bash
-npm run dev:frontend
-```
-
-## Ejecución con Docker Compose
-
-```bash
-docker compose up --build
-```
-
-Servicios:
-- Frontend: `http://localhost:3001`
-- Backend: `http://localhost:3000`
-- Postgres: `localhost:5432`
-- Redis: `localhost:6379`
-
-## Instalación rápida en servidor (una sola orden)
-
-Puedes desplegar en un servidor Linux (Ubuntu, Debian, CentOS, Rocky, Fedora, Arch, Alpine, etc.) con:
+Cuando el proyecto esté listo, se ejecutará un único comando para desplegar en cualquier servidor Linux:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/henry0295/chatbot-voip/main/install.sh | sudo bash
 ```
 
-Qué hace `install.sh`:
-- Instala dependencias base (`git`, `curl`, `ca-certificates`)
-- Instala Docker si no existe
-- Clona/actualiza el proyecto en `/opt/chatbot-voip`
-- Crea `.env` desde `.env.example` si falta
-- Levanta todo con `docker compose up --build -d`
+Este script configurará automáticamente:
+- ✅ Dependencias del sistema
+- ✅ Docker + Docker Compose
+- ✅ Clonación del proyecto
+- ✅ Variables de entorno
+- ✅ Migraciones de base de datos
+- ✅ Levantamiento de servicios
 
-Después de instalar, revisa `/opt/chatbot-voip/.env` y define `ANTHROPIC_API_KEY`.
+---
 
-## Scripts útiles
+## 📚 Documentación de Fases de Desarrollo
 
-- `npm run lint`
-- `npm run test`
-- `npm run build`
+### ✅ **FASE 1: Multi-Tenant Architecture** (COMPLETADA)
+- Workspaces aislados por cliente
+- Gestión de miembros con roles (Owner, Admin, User)
+- Guards de acceso multi-tenant
+- [Documentación detallada →](./FASE_1_IMPLEMENTATION.md)
+
+### ✅ **FASE 2: Mejorar Agentes** (COMPLETADA)
+- Refactorizar módulo Agent para multi-tenant
+- Dashboard de agentes con estadísticas
+- Clonación de agentes (duplicate)
+- Parámetros configurables (temperatura, tokens, modelo)
+- Validación de configuración
+- [Documentación detallada →](./FASE_2_IMPLEMENTATION.md)
+
+### ⏳ **FASE 3-4: Integración de Canales** (8 semanas)
+- **Fase 3:** WhatsApp Cloud API
+- **Fase 4:** Instagram, Messenger, Facebook
+
+### ⏳ **FASE 5: CRM** (3-4 semanas)
+- Módulo de Contactos
+- Oportunidades (Pipeline Kanban)
+- Tareas y Actividades
+
+### ⏳ **FASE 6: Automation Builder Visual** (5-6 semanas)
+- Editor no-code con React Flow
+- Nodos: Trigger, Condición, Acción, IA
+- Motor de ejecución de flujos
+
+### ⏳ **FASE 7: Campañas Masivas** (2-3 semanas)
+- Envío de mensajes en masa
+- Plantillas personalizadas
+- Programación de envíos
+
+### ⏳ **FASE 8: Developer Tools & Monetización** (3-4 semanas)
+- API REST documentada
+- SDK npm
+- CLI
+- Sistema de planes y facturación
+
+---
+
+## 📊 Progreso General
+
+**Estado:** Fase 2 Completada ✅ | Fase 3 Iniciando
+
+```
+═══════════════════════════════════════════
+OMNIBOT - ROADMAP DE DESARROLLO
+═══════════════════════════════════════════
+
+Fase 1: Multi-Tenant         ████████████████████ 100% ✅
+Fase 2: Agentes Mejorados    ████████████████████ 100% ✅
+Fase 3: WhatsApp             ░░░░░░░░░░░░░░░░░░░░   0%
+Fase 4: Multi-Canal          ░░░░░░░░░░░░░░░░░░░░   0%
+Fase 5: CRM                  ░░░░░░░░░░░░░░░░░░░░   0%
+Fase 6: Automatizaciones     ░░░░░░░░░░░░░░░░░░░░   0%
+Fase 7: Campañas             ░░░░░░░░░░░░░░░░░░░░   0%
+Fase 8: Tools & Monetización ░░░░░░░░░░░░░░░░░░░░   0%
+
+Tiempo total estimado: 6-9 meses (1 dev full-time)
+```
+
+---
+
+## 📁 Estructura de Carpetas
+
+```
+omnibot/
+├── backend/
+│   ├── src/
+│   │   ├── workspace/        ← Multi-tenant (✅ Fase 1)
+│   │   ├── agent/            ← Agentes IA (✅ Fase 2)
+│   │   ├── channel/          ← Canales (⏳ Fase 3-4)
+│   │   ├── crm/              ← CRM (⏳ Fase 5)
+│   │   ├── automation/       ← Builder (⏳ Fase 6)
+│   │   ├── campaign/         ← Campañas (⏳ Fase 7)
+│   │   ├── chat/             ← Chat (existente)
+│   │   ├── health/           ← Health (existente)
+│   │   ├── auth/             ← Auth (existente)
+│   │   ├── database/         ← Migraciones
+│   │   └── common/           ← Guards, Decoradores
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── dashboard/    ← Dashboard
+│   │   │   ├── agents/       ← Gestión de agentes
+│   │   │   ├── channels/     ← Canales
+│   │   │   ├── crm/          ← CRM
+│   │   │   └── automations/  ← Builder visual
+│   │   └── components/
+│   └── package.json
+├── docker-compose.yml
+├── .env.example
+├── FASE_1_IMPLEMENTATION.md   ← Detalles técnicos Fase 1
+├── FASE_2_IMPLEMENTATION.md   ← Detalles técnicos Fase 2
+└── README.md                  (este archivo)
