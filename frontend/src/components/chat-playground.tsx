@@ -38,7 +38,9 @@ export function ChatPlayground() {
       });
 
       if (!response.ok) {
-        throw new Error(`Error del backend: ${response.status}`);
+        throw new Error(
+          `Error del backend (${response.status} ${response.statusText || "desconocido"}).`,
+        );
       }
 
       const data = (await response.json()) as ChatResponse;
