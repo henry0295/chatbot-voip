@@ -1,0 +1,28 @@
+{
+  "name": "chatbot-voip",
+  "version": "1.0.0",
+  "description": "Plataforma propia estilo docs para chatbot VOIP con NestJS + Next.js",
+  "private": true,
+  "scripts": {
+    "dev:backend": "npm --workspace backend run start:dev",
+    "dev:frontend": "npm --workspace frontend run dev",
+    "build": "npm --workspace backend run build && npm --workspace frontend run build",
+    "lint": "npm --workspace backend run lint && npm --workspace frontend run lint",
+    "test": "npm --workspace backend run test -- --runInBand"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henry0295/chatbot-voip.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/henry0295/chatbot-voip/issues"
+  },
+  "homepage": "https://github.com/henry0295/chatbot-voip#readme",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+}
