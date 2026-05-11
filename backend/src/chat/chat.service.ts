@@ -65,6 +65,9 @@ const DOC_PAGES: Array<{ title: string; excerpt: string; path: string }> = [
   },
 ];
 
+const MAX_TOOL_ITERATIONS = 3;
+const DEFAULT_MAX_TOKENS = 700;
+
 @Injectable()
 export class ChatService {
   private readonly apiUrl = 'https://api.anthropic.com/v1/messages';
@@ -90,7 +93,7 @@ export class ChatService {
 
     const usedTools = new Set<string>();
 
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < MAX_TOOL_ITERATIONS; i += 1) {
       const response = await this.callAnthropic(apiKey, messages);
       const toolUses = response.content.filter(
         (block): block is AnthropicToolUseBlock => block.type === 'tool_use',
@@ -177,7 +180,7 @@ export class ChatService {
       },
       body: JSON.stringify({
         model: this.defaultModel,
-        max_tokens: 700,
+        max_tokens: DEFAULT_MAX_TOKENS,
         system:
           'Eres un asistente para un producto propio estilo documentación SaaS. Responde en español, enfocado en implementación práctica y arquitectura.',
         tools: [
