@@ -80,23 +80,20 @@ install_docker_if_needed() {
     
     log_info "Detectado sistema basado en RHEL. Usando ${pkg_manager}..."
     
-    # Agregar repositorio de Docker
-    ${pkg_manager} config-manager --add-repo https://download.docker.com/linux/rocky/docker-ce.repo 2>/dev/null || \
-    ${pkg_manager} config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo 2>/dev/null || true
+    # Habilitar módulo docker en Rocky/RHEL 9 si es necesario
+    ${pkg_manager} module enable -y docker 2>/dev/null || true
     
-    # Intentar instalar Docker con reintentos
-    local max_retries=3
-    local retry=0
-    while [ $retry -lt $max_retries ]; do
-      if ${pkg_manager} install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin 2>/dev/null; then
-        break
-      fi
-      retry=$((retry + 1))
-      if [ $retry -lt $max_retries ]; then
-        log_warn "Reintentando instalación de Docker (intento $((retry + 1))/$max_retries)..."
-        sleep 5
-      fi
-    done
+    # Agregar repositorio de Docker (intentar múltiples fuentes)
+    ${pkg_manager} config-manager --add-repo https://download.docker.com/linux/rocky/docker-ce.repo 2>/dev/null || true
+    
+    # Limpiar cache del repositorio
+    ${pkg_manager} clean expire-cache 2>/dev/null || true
+    
+    # Intentar instalación directa primero con el instalador oficial como fallback
+    if ! ${pkg_manager} install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin 2>/dev/null; then
+      log_warn "Instalación desde repositorio de Docker CE falló. Intentando instalador oficial..."
+      curl -fsSL https://get.docker.com | sh
+    fi
   else
     # Para otros sistemas, usar el instalador oficial
     curl -fsSL https://get.docker.com | sh
